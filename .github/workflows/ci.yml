@@ -1,0 +1,61 @@
+name: CI
+on:
+  push:
+
+permissions:
+  id-token: write
+  contents: read
+env:
+  AWS_REGION: eu-north-1
+
+jobs:
+  create-regisry:
+    runs-on: ubuntu-latest
+    outputs:
+      repository-name: ${{ steps.create-registry.outputs.repository-name }}
+
+    steps:
+      - name: Repository Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::611129769464:oidc-provider/token.actions.githubusercontent.com
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Create Registry
+        id: create-registry
+        run: |
+          cd terraform/registry/
+
+          terraform init \
+          -backend-config=backend-config.tf \
+          -reconfigure \
+          -input=false
+
+          terraform apply \
+          -var-file=vars.tfvars \
+          -input=false \
+          -auto-approve
+
+          export REPOSITORY_NAME=$(terraform output --raw repository_name)
+          echo "::set-output name=repository-name::$REPOSITORY_NAME"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [create-registry]
+    env:
+      REPOSITORY_NAME: ${{ needs.create-registry.outputs.repository-name }}
+      ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+    steps:
+      - name: Build & push
+        id: docker-build
+        run: |
+          export IMAGE_TAG=$(git rev-parse --short HEAD)
+
+          export ACCOUNT_ID=$(aws sts get-caller-identity | jq -r .Account)
+          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+          export REPOSITORY_URL=${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPOSITORY_NAME}
+
+          docker build --platform linux/amd64 -t ${REPOSITORY_NAME}:${IMAGE_TAG} .
+          docker tag ${REPOSITORY_NAME}:${IMAGE_TAG} ${REPOSITORY_URL}:${IMAGE_TAG}
+          docker push ${REPOSITORY_URL}:${IMAGE_TAG}
