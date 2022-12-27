@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.0.11"
-
+  backend "s3" {}
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -13,16 +13,16 @@ terraform {
   }
 }
 
-backend "s3" { /* See the backend config in backend-config.tf */ }
+
 
 variable "registry_name" {
-  type = string
-  default = ["makkarroo-registry"]
+  type    = string
+  default = "makkarroo-registry"
 }
 
 variable "aws_region" {
-  type = string
-  default = ["eu-north-1"]
+  type    = string
+  default = "eu-north-1"
 }
 
 provider "aws" {
