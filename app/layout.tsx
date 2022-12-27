@@ -1,18 +1,15 @@
-import './globals.css'
+import "@styles/dist.css"
+import Providers from "@components/Providers"
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
+    <html lang="fi" data-theme="night">
       <head />
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }
+
+export default RootLayout
