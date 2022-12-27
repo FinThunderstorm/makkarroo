@@ -4,9 +4,15 @@ const Home = async () => {
   // const menu = await getUnicafeMenu()
   return (
     <div>
-      testing
+      <div className="navbar bg-red-600">
+        <div className="navbar-start">
+          <a className="navbar-item">Makkarroo</a>
+        </div>
+      </div>
       {/* {menu.map((item) => (
-        <pre key={item.id}>{JSON.stringify(item, null, 2)}</pre>
+        <div key={item.id} className="card">
+          <pre>{JSON.stringify(item, null, 2)}</pre>
+        </div>
       ))} */}
     </div>
   )
