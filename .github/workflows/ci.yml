@@ -21,7 +21,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::611129769464:oidc-provider/token.actions.githubusercontent.com
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: us-east-1
       - name: Create Registry
         id: create-registry
         run: |
