@@ -9,7 +9,7 @@ env:
   AWS_REGION: eu-north-1
 
 jobs:
-  create-regisry:
+  create-registry:
     runs-on: ubuntu-latest
     outputs:
       repository-name: ${{ steps.create-registry.outputs.repository-name }}
@@ -33,7 +33,6 @@ jobs:
           -input=false
 
           terraform apply \
-          -var-file=vars.tfvars \
           -input=false \
           -auto-approve
 

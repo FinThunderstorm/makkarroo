@@ -17,10 +17,12 @@ backend "s3" { /* See the backend config in backend-config.tf */ }
 
 variable "registry_name" {
   type = string
+  default = ["makkarroo-registry"]
 }
 
 variable "aws_region" {
   type = string
+  default = ["eu-north-1"]
 }
 
 provider "aws" {
