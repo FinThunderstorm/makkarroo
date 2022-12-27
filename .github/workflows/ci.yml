@@ -35,16 +35,17 @@ jobs:
           -auto-approve
 
           export REPOSITORY_NAME=$(terraform output --raw repository_name)
+          echo "REPOSITORY_NAME=$REPOSITORY_NAME" >> $GITHUB_ENV
 
-      - name: Build & push
-        id: docker-build
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          export IMAGE_TAG=$(git rev-parse --short HEAD)
-
-          export ACCOUNT_ID=$(aws sts get-caller-identity | jq -r .Account)
-          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-          export REPOSITORY_URL=${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPOSITORY_NAME}
-
-          docker build --platform linux/amd64 -t ${REPOSITORY_NAME}:${IMAGE_TAG} .
-          docker tag ${REPOSITORY_NAME}:${IMAGE_TAG} ${REPOSITORY_URL}:${IMAGE_TAG}
-          docker push ${REPOSITORY_URL}:${IMAGE_TAG}
+          docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
