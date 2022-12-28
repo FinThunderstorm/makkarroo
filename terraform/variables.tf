@@ -3,6 +3,11 @@ variable "registry_name" {
   default = "makkarroo-registry"
 }
 
+variable "image_tag" {
+  type    = string
+  default = "latest"
+}
+
 variable "aws_region" {
   type    = string
   default = "eu-west-1"
