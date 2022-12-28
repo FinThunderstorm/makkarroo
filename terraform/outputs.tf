@@ -13,6 +13,10 @@ output "repository_url" {
   value       = aws_ecr_repository.repository.repository_url
 }
 
-output "makkarroo_service_url" {
+output "makkarroo_service_url_apprunner" {
   value = aws_apprunner_service.makkarroo.service_url
+}
+
+output "makkarroo_service_url" {
+  value = aws_apprunner_custom_domain_association.makkarroo.domain_name
 }

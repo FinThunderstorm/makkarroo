@@ -1,10 +1,20 @@
 terraform {
   required_version = ">= 1.0.11"
-  backend "s3" {}
+  backend "s3" {
+    bucket         = "makkarroo-terraform-state"
+    key            = "makkarroo-ci.tfstate"
+    region         = "eu-north-1"
+    encrypt        = true
+    dynamodb_table = "makkarroo-terraform-locks"
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = ">= 4.48.0"
+    }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
     }
   }
 }
@@ -12,6 +22,10 @@ terraform {
 provider "aws" {
   region = var.aws_region
 }
+
+provider "cloudflare" {
+}
+
 resource "aws_ecr_repository" "repository" {
   name                 = var.registry_name
   image_tag_mutability = "MUTABLE"
