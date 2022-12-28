@@ -10,7 +10,7 @@ env:
   AWS_ROLE_ARN: arn:aws:iam::611129769464:role/gh
 
 jobs:
-  create-registry:
+  build-n-push:
     runs-on: ubuntu-latest
     steps:
       - name: Repository Checkout
@@ -20,13 +20,13 @@ jobs:
         with:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Create Registry
-        id: create-registry
+      - name: Apply Terraform
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          cd terraform/registry/
+          cd terraform/
 
           terraform init \
-          -backend-config=config/backend-config.tf \
           -reconfigure \
           -input=false
 
