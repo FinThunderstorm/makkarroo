@@ -27,7 +27,6 @@ jobs:
           cd terraform/
 
           terraform init \
-          -reconfigure \
           -input=false
 
           terraform apply \
