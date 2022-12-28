@@ -6,8 +6,8 @@ permissions:
   id-token: write
   contents: read
 env:
-  AWS_REGION: eu-north-1
-  AWS_ROLE_ARN: arn:aws:iam::611129769464:role/gh
+  AWS_REGION: eu-west-1
+  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
 jobs:
   build-n-push:
@@ -18,7 +18,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
