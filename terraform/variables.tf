@@ -5,5 +5,6 @@ variable "registry_name" {
 
 variable "aws_region" {
   type    = string
-  default = "eu-north-1"
+  default = "eu-west-1"
 }
+

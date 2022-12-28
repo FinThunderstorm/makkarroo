@@ -12,3 +12,7 @@ output "repository_url" {
   description = "The URL of the repository."
   value       = aws_ecr_repository.repository.repository_url
 }
+
+output "makkarroo_service_url" {
+  value = aws_apprunner_service.makkarroo.service_url
+}
