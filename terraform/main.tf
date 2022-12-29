@@ -26,63 +26,127 @@ provider "aws" {
 provider "cloudflare" {
 }
 
-resource "aws_ecr_repository" "repository" {
-  name                 = var.registry_name
-  image_tag_mutability = "MUTABLE"
+resource "aws_s3_bucket" "app" {
+  bucket = "makkarroo-bucket"
   tags = {
-    Name = var.registry_name
+    Environment = "production"
+    Name        = "makkarroo-bucket"
   }
 
-  image_scanning_configuration {
-    scan_on_push = true
+}
+
+resource "aws_s3_bucket_website_configuration" "app_website_conf" {
+  bucket = aws_s3_bucket.app.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "404.html"
   }
 }
 
-resource "aws_apprunner_auto_scaling_configuration_version" "makkarroo" {
-  auto_scaling_configuration_name = "makkarroo-autoscaling"
+resource "aws_s3_bucket_acl" "app_acl" {
+  bucket = aws_s3_bucket.app.id
+  acl    = "private"
+}
 
-  max_concurrency = 200
-  max_size        = 1
-  min_size        = 1
-
-  tags = {
-    Name = "makkarroo-autoscaling"
+resource "aws_s3_bucket_versioning" "app_versioning" {
+  bucket = aws_s3_bucket.app.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
-resource "aws_apprunner_service" "makkarroo" {
-  depends_on                     = [time_sleep.waitrolecreate]
-  auto_scaling_configuration_arn = aws_apprunner_auto_scaling_configuration_version.makkarroo.arn
+locals {
+  s3_origin_id = "makkarroo-bucket-origin-id"
+}
 
-  service_name = "makkarroo-app-runner"
+resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
+  comment = "makkarroo.alanen.dev"
+}
 
-  source_configuration {
-    image_repository {
-      image_configuration {
-        port = "3000"
+resource "aws_cloudfront_distribution" "app" {
+  origin {
+    domain_name = aws_s3_bucket.app.bucket_regional_domain_name
+    origin_id   = local.s3_origin_id
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "makkarroo"
+  default_root_object = "index.html"
+
+  # Configure logging here if required
+  #logging_config {
+  #  include_cookies = false
+  #  bucket          = "mylogs.s3.amazonaws.com"
+  #  prefix          = "myprefix"
+  #}
+
+  # If you have domain configured use it here
+  #aliases = ["mywebsite.example.com", "s3-static-web-dev.example.com"]
+
+  default_cache_behavior {
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
+
+    target_origin_id = local.s3_origin_id
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
       }
-
-      image_identifier      = "${aws_ecr_repository.repository.repository_url}:${var.image_tag}"
-      image_repository_type = "ECR"
-
     }
-    authentication_configuration {
-      access_role_arn = aws_iam_role.role.arn
-    }
-    auto_deployments_enabled = true
 
-
+    viewer_protocol_policy = "allow-all"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
   }
-  health_check_configuration {
-    healthy_threshold   = 1
-    interval            = 10
-    path                = "/"
-    protocol            = "TCP"
-    timeout             = 5
-    unhealthy_threshold = 5
+
+  # Cache behavior with precedence 1
+  ordered_cache_behavior {
+    path_pattern     = "/content/*"
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = local.s3_origin_id
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "whitelist"
+      locations        = ["FI"]
+    }
   }
 
   tags = {
-    Name = "makkarroo-app-runner"
+    Environment = "production"
+    Name        = "makkarroo-cf"
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
   }
 }

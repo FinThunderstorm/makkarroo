@@ -1008,17 +1008,6 @@ video {
   width: 100%;
 }
 
-.navbar-end {
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.navbar-brand,.navbar-end {
-  align-items: center;
-  display: flex;
-  gap: .5rem;
-}
-
 .navbar-item {
   border-radius: .5rem;
   cursor: pointer;
@@ -1048,11 +1037,6 @@ video {
 .navbar:not(:has(.navbar-start,.navbar-end)) .navbar-center {
   align-items: center;
   justify-content: center;
-}
-
-.bg-primary {
-  --tw-bg-opacity: 1;
-  background-color: rgb(var(--primary) / var(--tw-bg-opacity));
 }
 
 .bg-red-600 {

@@ -1,30 +1,23 @@
-resource "aws_iam_role" "role" {
-  name = "makkarroo-role"
-  assume_role_policy = jsonencode(
-    {
-      "Version" : "2012-10-17",
-      "Statement" : [
-        {
-          "Action" : "sts:AssumeRole",
-          "Principal" : {
-            "Service" : [
-              "build.apprunner.amazonaws.com",
-              "tasks.apprunner.amazonaws.com"
-            ]
-          },
-          "Effect" : "Allow",
-          "Sid" : ""
-        }
-      ]
-  })
+data "aws_iam_policy_document" "s3_policy" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.app.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
+    }
+  }
 }
 
-resource "aws_iam_role_policy_attachment" "ecr-policy" {
-  role       = aws_iam_role.role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
+resource "aws_s3_bucket_policy" "app" {
+  bucket = aws_s3_bucket.app.id
+  policy = data.aws_iam_policy_document.s3_policy.json
 }
 
-resource "time_sleep" "waitrolecreate" {
-  depends_on      = [aws_iam_role.role]
-  create_duration = "60s"
+resource "aws_s3_bucket_public_access_block" "app" {
+  bucket = aws_s3_bucket.app.id
+
+  block_public_acls   = true
+  block_public_policy = true
 }

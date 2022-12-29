@@ -9,6 +9,7 @@
     "start:dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export": "next export",
     "css": "tailwindcss -i styles/globals.css -o styles/dist.css",
     "css:dev": "tailwindcss -i styles/globals.css -o styles/dist.css --watch",
     "prettier": "prettier --write \"**/*.{js,ts,tsx,md,json}\""
