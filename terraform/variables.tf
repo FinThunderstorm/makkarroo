@@ -3,3 +3,8 @@ variable "aws_region" {
   default = "eu-north-1"
 }
 
+variable "domain_name" {
+  type    = string
+  default = "makkarroo.alanen.dev"
+}
+

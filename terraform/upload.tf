@@ -1,6 +1,5 @@
 module "out" {
   source = "hashicorp/dir/template"
-
   base_dir = "${path.module}/../out"
 }
 
@@ -15,3 +14,7 @@ resource "aws_s3_object" "static" {
   content                = each.value.content
   server_side_encryption = "AES256"
 }
+
+
+
+

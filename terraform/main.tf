@@ -23,6 +23,11 @@ provider "aws" {
   region = var.aws_region
 }
 
+provider "aws" {
+  alias  = "acm"
+  region = "us-east-1"
+}
+
 provider "cloudflare" {
 }
 
@@ -33,6 +38,14 @@ resource "aws_s3_bucket" "app" {
     Name        = "makkarroo-bucket"
   }
 
+}
+
+resource "aws_s3_bucket" "logs" {
+  bucket = "makkarroo-logs-bucket"
+  tags = {
+    Environment = "production"
+    Name        = "cf-logs"
+  }
 }
 
 resource "aws_s3_bucket_website_configuration" "app_website_conf" {
@@ -52,6 +65,11 @@ resource "aws_s3_bucket_acl" "app_acl" {
   acl    = "private"
 }
 
+resource "aws_s3_bucket_acl" "logs_acl" {
+  bucket = aws_s3_bucket.logs.id
+  acl    = "private"
+}
+
 resource "aws_s3_bucket_versioning" "app_versioning" {
   bucket = aws_s3_bucket.app.id
   versioning_configuration {
@@ -64,7 +82,7 @@ locals {
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  comment = "makkarroo.alanen.dev"
+  comment = var.domain_name
 }
 
 resource "aws_cloudfront_distribution" "app" {
@@ -82,41 +100,18 @@ resource "aws_cloudfront_distribution" "app" {
   comment             = "makkarroo"
   default_root_object = "index.html"
 
-  # Configure logging here if required
-  #logging_config {
-  #  include_cookies = false
-  #  bucket          = "mylogs.s3.amazonaws.com"
-  #  prefix          = "myprefix"
-  #}
-
-  # If you have domain configured use it here
-  #aliases = ["mywebsite.example.com", "s3-static-web-dev.example.com"]
-
-  default_cache_behavior {
-    allowed_methods = ["GET", "HEAD", "OPTIONS"]
-    cached_methods  = ["GET", "HEAD"]
-
-    target_origin_id = local.s3_origin_id
-
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    viewer_protocol_policy = "allow-all"
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+  logging_config {
+    include_cookies = false
+    bucket          = aws_s3_bucket.logs.bucket_domain_name
+    prefix          = "makkarroo-cf"
   }
 
-  # Cache behavior with precedence 1
-  ordered_cache_behavior {
-    path_pattern     = "/content/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD"]
+  aliases = [var.domain_name]
+
+  default_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
+
     target_origin_id = local.s3_origin_id
 
     forwarded_values {
@@ -147,6 +142,9 @@ resource "aws_cloudfront_distribution" "app" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn            = aws_acm_certificate.alanendev.arn
+    cloudfront_default_certificate = false
+    minimum_protocol_version       = "TLSv1.2_2018"
+    ssl_support_method             = "sni-only"
   }
 }
