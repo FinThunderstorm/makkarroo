@@ -13,14 +13,14 @@ export const compassGroupRestaurantsInfo: {
     3134: {
         name: 'Ravintola Pääposti',
         key: 'paaposti',
-        address: 'Mannerheiminaukio 1 B, 00100 Helsinki',
+        address: 'Mannerheiminaukio 1 B',
         website:
             'https://www.compass-group.fi/ravintolat-ja-ruokalistat/foodco/kaupungit/helsinki/paaposti/'
     },
     3294: {
         name: 'Ravintola WTC',
         key: 'wtc',
-        address: 'Aleksanterinkatu 17, 00100 Helsinki',
+        address: 'Aleksanterinkatu 17',
         website:
             'https://www.compass-group.fi/ravintolat-ja-ruokalistat/foodco/kaupungit/helsinki/wtc/'
     }
@@ -37,7 +37,7 @@ export const laTorreRestaurantsInfo: {
     fratello: {
         name: 'Fratello',
         key: 'fratello',
-        address: 'Yliopistonkatu 6, 00100 Helsinki',
+        address: 'Yliopistonkatu 6',
         website: 'https://www.latorre.fi/toimipiste/fratello'
     }
 }
