@@ -1,7 +1,11 @@
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
 import { compassGroupRestaurantsInfo } from '@utils/config'
-import { isItemHighlighted, getPriceFromString } from '@utils/tools'
+import {
+    isItemHighlighted,
+    getPriceFromString,
+    parseUnicafeDate
+} from '@utils/tools'
 export interface Menu {
     id: string
     key: string
@@ -12,11 +16,13 @@ export interface Menu {
 }
 
 export interface Day {
-    date: string
+    key: string
+    date: Date
     items: Food[]
 }
 
 export interface Food {
+    key: string
     name: string
     price: string
     isHighlighted: boolean
@@ -59,9 +65,11 @@ export const unicafeMenuSchema = z
                 website: menu.permalink,
                 menu: menu.menuData.menus.map((item) => {
                     return {
-                        date: item.date, // TODO: format date to be more usable
+                        key: randomUUID(),
+                        date: parseUnicafeDate(item.date),
                         items: item.data.map((item) => {
                             return {
+                                key: randomUUID(),
                                 name: item.name,
                                 price: `${item.price.value.normal}€`,
                                 isHighlighted: isItemHighlighted(item.name)
@@ -108,9 +116,11 @@ export const compassGroupMenuSchema = z
                           .map((item) => {
                               return item.menuPackages.map((subitem) => {
                                   const test = {
-                                      date: item.date, // TODO: format date to be more usable
+                                      key: randomUUID(),
+                                      date: new Date(item.date),
                                       items: subitem.meals.map((meal) => {
                                           return {
+                                              key: randomUUID(),
                                               name: meal.name,
                                               price:
                                                   subitem.price === ''

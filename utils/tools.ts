@@ -6,10 +6,16 @@ export const isItemHighlighted = (item: string): boolean => {
     )
 }
 
-export const getPriceFromString = (str: string) => {
+export const getPriceFromString = (str: string): string => {
     const priceRegex = /(\d+,\d+)\€/
     const price = priceRegex.exec(str)
     return price ? price[0] : ''
+}
+
+export const parseUnicafeDate = (date: string): Date => {
+    const [day, month] = date.split(' ')[1].split('.')
+    const year = new Date().getFullYear()
+    return new Date(year, parseInt(month) - 1, parseInt(day))
 }
 
 export const generateDateArray = (from: Date, to: Date): Date[] => {

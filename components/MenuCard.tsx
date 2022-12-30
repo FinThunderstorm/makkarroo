@@ -9,13 +9,17 @@ const MenuCard = ({ menu }: { menu: Menu }) => {
             <div className="card-body">
                 <p className="mt-0 mb-2 font-mono lowercase">{menu.address}</p>
                 {menu.menu.map((item: Day) => (
-                    <div className="mt-2 mb-2">
+                    <div key={item.key} className="mt-2 mb-2">
                         <p className="font-mono font-bold uppercase">
-                            {item.date}
+                            {item.date.toLocaleDateString('fi-FI', {
+                                weekday: 'short',
+                                month: 'numeric',
+                                day: 'numeric'
+                            })}
                         </p>
                         <ul className="ml-8 list-disc">
                             {item.items.map((food: Food) => (
-                                <li className="leading-relaxed">
+                                <li key={food.key} className="leading-relaxed">
                                     <span
                                         className={
                                             food.isHighlighted

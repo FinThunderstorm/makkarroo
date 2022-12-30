@@ -86,6 +86,7 @@ export const getLaTorreMenu = async (name: string) => {
 
     const items: Food[] = titles.map((name, index) => {
         return {
+            key: randomUUID(),
             name,
             price: prices[index],
             isHighlighted: isItemHighlighted(name)
@@ -94,7 +95,8 @@ export const getLaTorreMenu = async (name: string) => {
 
     const days: Day[] = generateDateArray(from, to).map((date) => {
         return {
-            date: date.toLocaleDateString('fi-FI'),
+            key: randomUUID(),
+            date,
             items
         }
     })
