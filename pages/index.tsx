@@ -43,9 +43,14 @@ export default function Home({
             </Head>
             <main>
                 <div>
-                    <div className="navbar bg-red-600">
+                    <div className="navbar bg-red-100">
                         <div className="navbar-start">
-                            <p className="navbar-item font-mono">makkarroo</p>
+                            <p className="navbar-item bg-gradient-to-r from-yellow-600 to-red-800 bg-clip-text font-mono text-2xl font-extrabold lowercase text-transparent">
+                                makkarroo.{' '}
+                                <span className="ml-2 text-xs">
+                                    cool sausage application.
+                                </span>
+                            </p>
                         </div>
                     </div>
 
