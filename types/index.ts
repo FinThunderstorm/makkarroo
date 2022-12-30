@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
 import { compassGroupRestaurantsInfo } from '@utils/config'
-import { isItemHighlighted } from '@utils/tools'
+import { isItemHighlighted, getPriceFromString } from '@utils/tools'
 export interface Menu {
     id: string
     key: string
@@ -72,12 +72,6 @@ export const unicafeMenuSchema = z
             }
         })
     })
-
-const getPriceFromString = (str: string) => {
-    const priceRegex = /(\d+,\d+)\€/
-    const price = priceRegex.exec(str)
-    return price ? price[0] : ''
-}
 
 export const compassGroupMenuSchema = z
     .object({
