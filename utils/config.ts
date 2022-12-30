@@ -15,3 +15,10 @@ export const compassGroupRestaurantsInfo: {
         address: 'Aleksanterinkatu 17, 00100 Helsinki'
     }
 }
+
+export const hightlightKeywords = [
+    'uunilohi',
+    'makkara',
+    'lihapulla',
+    'wieninleike'
+]

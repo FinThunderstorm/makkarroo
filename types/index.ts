@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
-import { compassGroupRestaurantsInfo } from '@utils/config'
+import { compassGroupRestaurantsInfo, hightlightKeywords } from '@utils/config'
 
 export interface Menu {
     id: number
@@ -18,6 +18,13 @@ export interface Day {
 export interface Food {
     name: string
     price: string
+    isHighlighted: boolean
+}
+
+const isItemHighlighted = (item: string) => {
+    return hightlightKeywords.some((keyword) =>
+        item.toLowerCase().includes(keyword)
+    )
 }
 
 export const unicafeMenuSchema = z
@@ -59,7 +66,8 @@ export const unicafeMenuSchema = z
                         items: item.data.map((item) => {
                             return {
                                 name: item.name,
-                                price: `${item.price.value.normal}€`
+                                price: `${item.price.value.normal}€`,
+                                isHighlighted: isItemHighlighted(item.name)
                             }
                         })
                     }
@@ -68,9 +76,8 @@ export const unicafeMenuSchema = z
         })
     })
 
-const priceRegex = /(\d+,\d+)\€/
-
 const getPriceFromString = (str: string) => {
+    const priceRegex = /(\d+,\d+)\€/
     const price = priceRegex.exec(str)
     return price ? price[0] : ''
 }
@@ -118,7 +125,10 @@ export const compassGroupMenuSchema = z
                                                       ? getPriceFromString(
                                                             subitem.name
                                                         )
-                                                      : subitem.price
+                                                      : subitem.price,
+                                              isHighlighted: isItemHighlighted(
+                                                  meal.name
+                                              )
                                           }
                                       })
                                   }

@@ -16,8 +16,16 @@ const MenuCard = ({ menu }: { menu: Menu }) => {
                         <ul className="ml-8 list-disc">
                             {item.items.map((food: Food) => (
                                 <li className="leading-relaxed">
-                                    {food.name}{' '}
-                                    <span className="badge badge-outline-success badge-xs">
+                                    <span
+                                        className={
+                                            food.isHighlighted
+                                                ? 'bg-gradient-to-r from-red-800 to-yellow-600 bg-clip-text font-extrabold uppercase text-transparent'
+                                                : ''
+                                        }
+                                    >
+                                        {food.name}
+                                    </span>
+                                    <span className="badge badge-outline-success badge-xs ml-2">
                                         {food.price}
                                     </span>
                                 </li>
