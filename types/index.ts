@@ -7,6 +7,7 @@ export interface Menu {
     key: string
     restaurant: string
     address: string
+    website: string
     menu: Day[]
 }
 
@@ -34,6 +35,7 @@ export const unicafeMenuSchema = z
             title: z.string(),
             address: z.string(),
             slug: z.string(),
+            permalink: z.string(),
             menuData: z.object({
                 menus: z.array(
                     z.object({
@@ -60,6 +62,7 @@ export const unicafeMenuSchema = z
                 key: menu.slug,
                 restaurant: `Unicafe ${menu.title}`,
                 address: menu.address,
+                website: menu.permalink,
                 menu: menu.menuData.menus.map((item) => {
                     return {
                         date: item.date, // TODO: format date to be more usable
@@ -111,6 +114,7 @@ export const compassGroupMenuSchema = z
                 key: compassGroupRestaurantsInfo[menu.id].key,
                 restaurant: compassGroupRestaurantsInfo[menu.id].name,
                 address: compassGroupRestaurantsInfo[menu.id].address,
+                website: compassGroupRestaurantsInfo[menu.id].website,
                 menu: menu.menu.menus
                     ? menu.menu.menus
                           .map((item) => {

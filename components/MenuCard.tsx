@@ -4,7 +4,7 @@ const MenuCard = ({ menu }: { menu: Menu }) => {
     return (
         <div key={menu.id} className="card bg-red-100">
             <h2 className="card-header bg-gradient-to-r from-yellow-600 to-red-800 bg-clip-text font-mono text-3xl font-extrabold uppercase text-transparent">
-                {menu.restaurant}
+                <a href={menu.website}>{menu.restaurant}</a>
             </h2>
             <div className="card-body">
                 <p className="mt-0 mb-2 font-mono lowercase">{menu.address}</p>
