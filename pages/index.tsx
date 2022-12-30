@@ -58,7 +58,7 @@ export default function Home({
                     {menu.map((item: any) => (
                         <pre>{JSON.stringify(item, null, 2)}</pre>
                     ))} */}
-                    <div className="container mx-auto grid grid-cols-3 gap-8 py-4">
+                    <div className="container mx-auto grid grid-cols-1 gap-8 py-8 md:grid-cols-2 lg:grid-cols-3">
                         {menu.map((item: Menu) => (
                             <MenuCard menu={item} />
                         ))}

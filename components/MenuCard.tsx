@@ -2,7 +2,11 @@ import { Menu, Day, Food } from '../types'
 
 const MenuCard = ({ menu }: { menu: Menu }) => {
     return (
-        <div key={menu.id} className="card bg-red-100">
+        <div
+            key={menu.id}
+            className="card bg-red-100"
+            style={{ maxWidth: 'inherit' }}
+        >
             <h2 className="card-header bg-gradient-to-r from-yellow-600 to-red-800 bg-clip-text font-mono text-3xl font-extrabold uppercase text-transparent">
                 <a href={menu.website}>{menu.restaurant}</a>
             </h2>
