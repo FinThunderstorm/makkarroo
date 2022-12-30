@@ -12,6 +12,9 @@ env:
 jobs:
   build-n-push:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://makkarroo.alanen.dev
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v3
