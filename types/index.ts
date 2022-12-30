@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
-import { compassGroupRestaurantsInfo, hightlightKeywords } from '@utils/config'
-
+import { compassGroupRestaurantsInfo } from '@utils/config'
+import { isItemHighlighted } from '@utils/tools'
 export interface Menu {
-    id: number
+    id: string
     key: string
     restaurant: string
     address: string
@@ -20,12 +20,6 @@ export interface Food {
     name: string
     price: string
     isHighlighted: boolean
-}
-
-const isItemHighlighted = (item: string) => {
-    return hightlightKeywords.some((keyword) =>
-        item.toLowerCase().includes(keyword)
-    )
 }
 
 export const unicafeMenuSchema = z

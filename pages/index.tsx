@@ -1,7 +1,8 @@
 import Head from 'next/head'
 import {
     getAllCompassGroupMenus,
-    getAllUnicafeMenus
+    getAllUnicafeMenus,
+    getAllLaTorreMenus
 } from '@utils/foodlistServices'
 import MenuCard from '@components/MenuCard'
 import { Menu } from 'types'
@@ -9,16 +10,26 @@ import { Menu } from 'types'
 export async function getStaticProps() {
     const menu = await getAllUnicafeMenus()
     const cc = await getAllCompassGroupMenus()
+    const fratello = await getAllLaTorreMenus()
 
     return {
         props: {
             menu,
-            cc
+            cc,
+            fratello
         }
     }
 }
 
-export default function Home({ menu, cc }: { menu: Menu[]; cc: Menu[] }) {
+export default function Home({
+    menu,
+    cc,
+    fratello
+}: {
+    menu: Menu[]
+    cc: Menu[]
+    fratello: Menu[]
+}) {
     return (
         <>
             <Head>
@@ -38,6 +49,9 @@ export default function Home({ menu, cc }: { menu: Menu[]; cc: Menu[] }) {
                         </div>
                     </div>
 
+                    {/* {fratello.map((item: any) => (
+                        <pre>{JSON.stringify(item, null, 2)}</pre>
+                    ))}
                     {/* {cc.map((item: any) => (
                         <pre>{JSON.stringify(item, null, 2)}</pre>
                     ))}
@@ -49,6 +63,9 @@ export default function Home({ menu, cc }: { menu: Menu[]; cc: Menu[] }) {
                             <MenuCard menu={item} />
                         ))}
                         {cc.map((item: Menu) => (
+                            <MenuCard menu={item} />
+                        ))}
+                        {fratello.map((item: Menu) => (
                             <MenuCard menu={item} />
                         ))}
                     </div>
