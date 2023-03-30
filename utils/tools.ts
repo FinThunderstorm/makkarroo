@@ -13,6 +13,7 @@ export const getPriceFromString = (str: string): string => {
 }
 
 export const parseUnicafeDate = (date: string): Date => {
+    // TODO: check if year changes and bump it up ( in other words check that date is not in past more than month )
     const [day, month] = date.split(' ')[1].split('.')
     const year = new Date().getFullYear()
     return new Date(year, parseInt(month) - 1, parseInt(day))

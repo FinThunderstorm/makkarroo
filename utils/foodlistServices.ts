@@ -120,3 +120,7 @@ export const getAllLaTorreMenus = async () => {
     return (await Promise.all(promises)).flat()
 }
 
+// TODO: Block by Dylan (lounastaja)
+// TODO: Dylan Marmoripiha (lounastaja)
+// TODO: Belge (raflaamo)
+// TODO: Paulin pitsamesta (raflaamo)
